@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { findByEntity } from "@/lib/services/documents";
 import { buildGraph, parseEntityNode } from "@/lib/services/graph";
 import { COLLECTIONS, getDb, DocType } from "@/lib/mongodb";
-import { TCEDocument } from "@/lib/types";
+import { LegalDocument } from "@/lib/types";
 
 const DOC_PROJECTION = {
   content: 0,
@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
     const { nodeId } = await req.json();
     const parsed = parseEntityNode(nodeId);
 
-    let documents: TCEDocument[] = [];
+    let documents: LegalDocument[] = [];
 
     if (parsed.kind === "entity" && parsed.field && parsed.value) {
       for (const type of ["acordao", "resolucao"] as DocType[]) {

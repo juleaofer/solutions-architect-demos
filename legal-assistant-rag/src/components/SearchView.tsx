@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Search } from "lucide-react";
-import { GraphData, TCEDocument } from "@/lib/types";
+import { GraphData, LegalDocument } from "@/lib/types";
 import DocumentList from "./DocumentList";
 import RelationshipGraph from "./RelationshipGraph";
 
@@ -12,7 +12,7 @@ interface Props {
 
 export default function SearchView({ type }: Props) {
   const [numero, setNumero] = useState("");
-  const [documents, setDocuments] = useState<TCEDocument[]>([]);
+  const [documents, setDocuments] = useState<LegalDocument[]>([]);
   const [graph, setGraph] = useState<GraphData>({ nodes: [], links: [] });
   const [loading, setLoading] = useState(false);
   const [context, setContext] = useState<string>();

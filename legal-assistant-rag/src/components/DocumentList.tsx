@@ -1,10 +1,10 @@
 "use client";
 
-import { TCEDocument } from "@/lib/types";
+import { LegalDocument } from "@/lib/types";
 import DocumentCard from "./DocumentCard";
 
 interface Props {
-  documents: TCEDocument[];
+  documents: LegalDocument[];
   loading: boolean;
   context?: string;
 }

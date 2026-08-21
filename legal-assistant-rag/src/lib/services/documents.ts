@@ -1,5 +1,5 @@
 import { getDb, COLLECTIONS, DocType } from "@/lib/mongodb";
-import { TCEDocument } from "@/lib/types";
+import { LegalDocument } from "@/lib/types";
 
 const DOC_PROJECTION = {
   content: 0,
@@ -7,18 +7,18 @@ const DOC_PROJECTION = {
   "metadata.texto_decisao_acordao": 0,
 };
 
-function serialize(doc: any): TCEDocument {
+function serialize(doc: any): LegalDocument {
   return {
     ...doc,
     _id: doc._id?.toString(),
-  } as TCEDocument;
+  } as LegalDocument;
 }
 
 /** Busca por source_id (número do documento) numa collection específica. */
 export async function findBySourceId(
   type: DocType,
   sourceId: string
-): Promise<TCEDocument[]> {
+): Promise<LegalDocument[]> {
   const db = await getDb();
   const col = db.collection(COLLECTIONS[type]);
   const docs = await col
@@ -31,14 +31,14 @@ export async function findBySourceId(
 /** Rebusca documentos por (doc_type, source_id) — usado no reuso por cache. */
 export async function findByIds(
   items: { doc_type: string; source_id: string }[]
-): Promise<TCEDocument[]> {
+): Promise<LegalDocument[]> {
   if (!items.length) return [];
   const db = await getDb();
   const byType: Record<string, string[]> = {};
   for (const it of items) {
     (byType[it.doc_type] ||= []).push(it.source_id);
   }
-  const out: TCEDocument[] = [];
+  const out: LegalDocument[] = [];
   for (const type of Object.keys(byType) as DocType[]) {
     if (!COLLECTIONS[type]) continue;
     const docs = await db
@@ -56,7 +56,7 @@ export async function findByEntity(
   type: DocType,
   field: string,
   value: string
-): Promise<TCEDocument[]> {
+): Promise<LegalDocument[]> {
   const db = await getDb();
   const col = db.collection(COLLECTIONS[type]);
   const docs = await col
@@ -69,9 +69,9 @@ export async function findByEntity(
 /** Busca documentos por relator, em ambas as collections. */
 export async function findByRelator(
   relator: string
-): Promise<TCEDocument[]> {
+): Promise<LegalDocument[]> {
   const db = await getDb();
-  const results: TCEDocument[] = [];
+  const results: LegalDocument[] = [];
   for (const type of ["acordao", "resolucao"] as DocType[]) {
     const col = db.collection(COLLECTIONS[type]);
     const docs = await col

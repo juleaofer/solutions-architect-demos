@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { FileArchive } from "lucide-react";
-import { TCEDocument } from "@/lib/types";
+import { LegalDocument } from "@/lib/types";
 
 function fmtDate(d?: string | null): string {
   if (!d) return "—";
@@ -11,7 +11,7 @@ function fmtDate(d?: string | null): string {
   return d;
 }
 
-export default function DocumentCard({ doc }: { doc: TCEDocument }) {
+export default function DocumentCard({ doc }: { doc: LegalDocument }) {
   const [showSource, setShowSource] = useState(false);
   const isAcordao = doc.doc_type === "acordao";
   const numero =

@@ -5,16 +5,16 @@ import {
   USE_CHUNKS,
   DocType,
 } from "@/lib/mongodb";
-import { TCEDocument } from "@/lib/types";
+import { LegalDocument } from "@/lib/types";
 import { QueryFilters } from "@/lib/services/intent";
 import { buildMatch, buildVectorFilter } from "@/lib/services/filters";
 
 /** Máximo de trechos (chunks) reconstruídos por documento-pai no contexto. */
 const MAX_CHUNKS_PER_PARENT = 4;
 
-function serialize(doc: any): TCEDocument {
+function serialize(doc: any): LegalDocument {
   const { content, embedding, ...rest } = doc;
-  return { ...rest, _id: doc._id?.toString(), content } as TCEDocument;
+  return { ...rest, _id: doc._id?.toString(), content } as LegalDocument;
 }
 
 // Captura o número citado logo após "acórdão"/"resolução" (com nº/n°/número opcional).
@@ -126,7 +126,7 @@ async function fusionRows(
  * documento e reconstrói o `content` a partir dos chunks que casaram (com
  * marcador "[...]" quando há salto de posição), até `limit` documentos.
  */
-function groupChunksToParents(rows: any[], limit: number): TCEDocument[] {
+function groupChunksToParents(rows: any[], limit: number): LegalDocument[] {
   const order: string[] = [];
   const map = new Map<
     string,
@@ -166,7 +166,7 @@ function groupChunksToParents(rows: any[], limit: number): TCEDocument[] {
       metadata: b.metadata,
       content: merged,
       score: e.score,
-    } as TCEDocument;
+    } as LegalDocument;
   });
 }
 
@@ -183,7 +183,7 @@ export async function retrieveContext(
   query: string,
   limit = 6,
   filters?: QueryFilters
-): Promise<TCEDocument[]> {
+): Promise<LegalDocument[]> {
   const db = await getDb();
   const numeros = extractNumeros(query);
   const numSet = new Set(numeros);
@@ -202,7 +202,7 @@ export async function retrieveContext(
     filters?.doc_type ? ([filters.doc_type] as DocType[]) : types;
 
   // Lista já fundida (texto + vetorial) via $rankFusion, por collection.
-  const perType: Record<string, TCEDocument[]> = {};
+  const perType: Record<string, LegalDocument[]> = {};
   // Pool fundo o suficiente para cobrir vários chunks por documento-pai.
   const chunkPool = Math.max(limit * 10, 60);
   const poolSize = limit * 2;
@@ -217,8 +217,8 @@ export async function retrieveContext(
   // semântico (a rota mais comum). Cada tipo mantém seu try/catch e o fallback
   // doc-level, de forma que a falha de uma collection não derruba a outra nem
   // rejeita o Promise.all.
-  const searchOneType = async (type: DocType): Promise<TCEDocument[]> => {
-    let docs: TCEDocument[] = [];
+  const searchOneType = async (type: DocType): Promise<LegalDocument[]> => {
+    let docs: LegalDocument[] = [];
     if (USE_CHUNKS) {
       try {
         const rows = await fusionRows(
@@ -266,9 +266,9 @@ export async function retrieveContext(
     perType[type] = perTypeDocs[i];
   });
 
-  const collected: TCEDocument[] = [];
+  const collected: LegalDocument[] = [];
   const seen = new Set<string>();
-  const push = (d: TCEDocument) => {
+  const push = (d: LegalDocument) => {
     const key = `${d.doc_type}:${d.source_id}`;
     if (!seen.has(key)) {
       seen.add(key);
@@ -303,7 +303,7 @@ export async function retrieveContext(
 }
 
 /** Monta o contexto textual para a LLM a partir dos documentos recuperados. */
-export function buildContextText(docs: TCEDocument[]): string {
+export function buildContextText(docs: LegalDocument[]): string {
   return docs
     .map((d, i) => {
       const tipo = d.doc_type === "acordao" ? "Acórdão" : "Resolução";

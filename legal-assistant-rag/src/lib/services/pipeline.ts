@@ -1,4 +1,4 @@
-import { TCEDocument } from "@/lib/types";
+import { LegalDocument } from "@/lib/types";
 import { chatCompletion, LLMMessage } from "@/lib/services/llm";
 import { routeQuestion, fastRoute, RouteResult } from "@/lib/services/intent";
 import { retrieveContext, buildContextText } from "@/lib/services/rag";
@@ -27,11 +27,11 @@ Ao usar documentos, cite-os pelo tipo e número (ex: "Acórdão nº 41346").
 Você também pode receber um bloco "MEMÓRIA DO USUÁRIO". Use-o para personalizar as respostas e para responder perguntas sobre o próprio usuário (nome, papel, interesses, preferências, contexto de conversas anteriores). Para perguntas pessoais, responda DIRETAMENTE com base na MEMÓRIA, mesmo que não haja documentos relacionados.
 Responda que não há informação suficiente APENAS quando a pergunta for sobre documentos/relacionamento e o contexto realmente não contiver o dado — jamais quando houver um RESULTADO QUANTITATIVO ou quando a resposta estiver na MEMÓRIA DO USUÁRIO.`;
 
-function docNumero(d: TCEDocument): number | null {
+function docNumero(d: LegalDocument): number | null {
   return d.metadata?.numero ?? d.metadata?.numero_resolucao ?? null;
 }
 
-function toCachedSources(docs: TCEDocument[]): CachedSource[] {
+function toCachedSources(docs: LegalDocument[]): CachedSource[] {
   return docs.map((d) => ({
     doc_type: d.doc_type,
     source_id: d.source_id,
@@ -39,7 +39,7 @@ function toCachedSources(docs: TCEDocument[]): CachedSource[] {
   }));
 }
 
-function label(d: TCEDocument): string {
+function label(d: LegalDocument): string {
   const tipo = d.doc_type === "acordao" ? "Acórdão" : "Resolução";
   return `${tipo} nº ${docNumero(d) ?? d.source_id}`;
 }
@@ -48,7 +48,7 @@ function label(d: TCEDocument): string {
 async function executeRoute(
   route: RouteResult,
   question: string
-): Promise<{ contextText: string; sources: TCEDocument[] }> {
+): Promise<{ contextText: string; sources: LegalDocument[] }> {
   if (route.intent === "count") {
     const c = await runCount(route);
     const porCol = Object.entries(c.byCollection)

@@ -1,7 +1,7 @@
-import { TCEDocument, GraphData, GraphNode, GraphLink } from "@/lib/types";
+import { LegalDocument, GraphData, GraphNode, GraphLink } from "@/lib/types";
 
 const ENTITY_FIELDS: {
-  key: keyof TCEDocument["metadata"];
+  key: keyof LegalDocument["metadata"];
   type: GraphNode["type"];
   prefix: string;
 }[] = [
@@ -15,7 +15,7 @@ const ENTITY_FIELDS: {
  * conectando cada documento às suas entidades: relatores, interessados
  * e processos relacionados.
  */
-export function buildGraph(docs: TCEDocument[]): GraphData {
+export function buildGraph(docs: LegalDocument[]): GraphData {
   const nodes = new Map<string, GraphNode>();
   const links: GraphLink[] = [];
   const linkSet = new Set<string>();

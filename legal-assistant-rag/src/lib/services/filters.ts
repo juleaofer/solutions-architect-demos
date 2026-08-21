@@ -1,12 +1,12 @@
 import { getDb, COLLECTIONS, DocType } from "@/lib/mongodb";
-import { TCEDocument } from "@/lib/types";
+import { LegalDocument } from "@/lib/types";
 import { QueryFilters, RouteResult, CountTarget } from "@/lib/services/intent";
 
 const PROJECTION = { embedding: 0, "metadata.texto_decisao_acordao": 0 };
 const SEARCH_INDEX = "filters";
 
-function serialize(doc: any): TCEDocument {
-  return { ...doc, _id: doc._id?.toString() } as TCEDocument;
+function serialize(doc: any): LegalDocument {
+  return { ...doc, _id: doc._id?.toString() } as LegalDocument;
 }
 
 function rx(value: string) {
@@ -134,10 +134,10 @@ function collectionsFor(filters: QueryFilters): DocType[] {
 export async function runFilter(
   route: RouteResult,
   limit = 12
-): Promise<TCEDocument[]> {
+): Promise<LegalDocument[]> {
   const db = await getDb();
   const compound = buildSearchCompound(route.filters);
-  const out: TCEDocument[] = [];
+  const out: LegalDocument[] = [];
   for (const type of collectionsFor(route.filters)) {
     const col = db.collection(COLLECTIONS[type]);
     // Com filtros: $search (índice `filters`) resolve tudo pelo índice Lucene.

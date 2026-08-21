@@ -1,9 +1,9 @@
 import { getDb, COLLECTIONS, DocType } from "@/lib/mongodb";
-import { TCEDocument } from "@/lib/types";
+import { LegalDocument } from "@/lib/types";
 import { GraphField } from "@/lib/services/intent";
 
-function serialize(doc: any): TCEDocument {
-  return { ...doc, _id: doc._id?.toString() } as TCEDocument;
+function serialize(doc: any): LegalDocument {
+  return { ...doc, _id: doc._id?.toString() } as LegalDocument;
 }
 
 /** Campos de entidade usados para conectar documentos numa rede de relacionamento. */
@@ -30,9 +30,9 @@ export interface GraphQueryResult {
   field: GraphField;
   value: string;
   /** Documentos que citam diretamente a entidade âncora. */
-  ancoras: TCEDocument[];
+  ancoras: LegalDocument[];
   /** Rede transitiva (documentos conectados via entidades compartilhadas). */
-  rede: TCEDocument[];
+  rede: LegalDocument[];
   totalRede: number;
 }
 
@@ -61,8 +61,8 @@ export async function runGraph(
   const path = `metadata.${field}`;
   const anchorMatch = { [path]: value };
 
-  const ancoras: TCEDocument[] = [];
-  const redeMap = new Map<string, TCEDocument>();
+  const ancoras: LegalDocument[] = [];
+  const redeMap = new Map<string, LegalDocument>();
 
   for (const type of ["acordao", "resolucao"] as DocType[]) {
     const colName = COLLECTIONS[type];
@@ -164,7 +164,7 @@ export async function runGraphByNumero(
 
   const ancoras = [serialize(anchor)];
   const anchorKey = `${anchor.doc_type}:${anchor.source_id}`;
-  const redeMap = new Map<string, TCEDocument>();
+  const redeMap = new Map<string, LegalDocument>();
 
   // 2) Para cada entidade do documento âncora, expande a rede por $graphLookup.
   // Profundidade e limites são decididos por runGraph conforme a cardinalidade.

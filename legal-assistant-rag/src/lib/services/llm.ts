@@ -5,7 +5,7 @@ interface LLMMessage {
 
 const API_URL = process.env.LLM_API_URL as string;
 const API_KEY = process.env.LLM_API_KEY as string;
-const MODEL = process.env.LLM_MODEL || "gpt-4o-mini";
+const MODEL = process.env.LLM_MODEL || "gpt-5.6-luna";
 
 /** Modelos (família gpt-5 / o-series) que só aceitam o temperature default (1). */
 function supportsCustomTemperature(model: string): boolean {

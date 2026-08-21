@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { UserSearch, User } from "lucide-react";
-import { GraphData, TCEDocument } from "@/lib/types";
+import { GraphData, LegalDocument } from "@/lib/types";
 import DocumentList from "./DocumentList";
 import RelationshipGraph from "./RelationshipGraph";
 
@@ -11,7 +11,7 @@ export default function RelatorView() {
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [selected, setSelected] = useState<string | null>(null);
-  const [documents, setDocuments] = useState<TCEDocument[]>([]);
+  const [documents, setDocuments] = useState<LegalDocument[]>([]);
   const [graph, setGraph] = useState<GraphData>({ nodes: [], links: [] });
   const [loading, setLoading] = useState(false);
   const [loadingSug, setLoadingSug] = useState(false);

@@ -14,7 +14,7 @@ export interface DocMetadata {
   nome_presidente?: string;
 }
 
-export interface TCEDocument {
+export interface LegalDocument {
   _id: string;
   id: number;
   source: string;
@@ -53,5 +53,5 @@ export interface GraphData {
 export interface ChatMessage {
   role: "user" | "assistant";
   content: string;
-  sources?: TCEDocument[];
+  sources?: LegalDocument[];
 }
